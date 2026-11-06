@@ -4,20 +4,94 @@
 
 ### My graph and state
 
-TODO: draw the first graph and explain what each node reads and changes. Answer the four state and routing questions in the brief.
+Graph: 
+
+![Original Graph.png](graph/Original%20Graph.png)
 
 ### Predictions before running
 
-| Message | Predicted route | Actual route | What I learned |
-| --- | --- | --- | --- |
-| I cannot connect to Wi-Fi. | | | |
-| I forgot my PASSWORD. | | | |
-| My laptop screen is broken. | | | |
-| My Wi-Fi password does not work. | | | |
+| Node          | Reads                           | Changes       | 
+|---------------|---------------------------------|---------------|
+| read_request  | message                         | Sets category |
+| wifi_help     | Wi-Fi instructions from JSON    | Sets reply    |
+| password_help | Password instructions from JSON | Sets reply    |
+| other_help    | No additional data              | Sets reply    |
+
+**1. What information does each node read and change?**
+
+`read_request` reads the user's message and sets the category. The help nodes read instructions from the local JSON file and set the reply. `other_help` returns a clarification question
+
+**2. What is the difference between a node update and a conditional edge?**
+
+A node updates the state. A conditional edge chooses which node runs next
+
+**3. Does the next node receive only the update or the current graph state?**
+
+The next node receives the current graph state, including the original message and previous updates
+
+**4. What do START, END, and compiling a graph mean?**
+
+`START` is the beginning of the graph. `END` finishes execution. Compiling prepares the graph so it can run
+
+### Predictions before running
+
+| Message                          | Predicted route               | Actual route                  | What I learned                    |
+|----------------------------------|-------------------------------|-------------------------------|-----------------------------------|
+| I cannot connect to Wi-Fi.       | read_request -> wifi_help     | read_request -> wifi_help     | Wi-Fi messages go to wifi_help    |
+| I forgot my PASSWORD.            | read_request -> password_help | read_request -> password_help | Routing is case-insensitive       |
+| My laptop screen is broken.      | read_request -> other_help    | read_request -> other_help    | Unknown problems go to other_help |
+| My Wi-Fi password does not work. | read_request -> wifi_help     | read_request -> wifi_help     | Wi-Fi has priority over password  |
 
 ### My change to the graph
 
-TODO: draw the graph with clarify_problem, show the new trace, and explain the difference. What does LangGraph control, and what do my functions decide?
+![Updated Graph.png](graph/Updated%20Graph.png)
+
+```text
+
+
+Message: My Wi-Fi password does not work.
+
+Original graph:
+read_request -> wifi_help -> END
+Category: wifi
+Result: Wi-Fi instructions
+
+Updated graph:
+read_request -> clarify_problem -> END
+
+Node: read_request
+Update: {"category": "both"}
+
+Node: clarify_problem
+Update:
+{"reply": "Do you need help connecting to Wi-Fi, or recovering your account password?"}
+
+Final category: both
+Final reply:
+Do you need help connecting to Wi-Fi,
+or recovering your account password?
+
+```
+
+**Explain the difference**
+
+In the original graph, Wi-Fi has priority. If a message contains both Wi-Fi and password, the graph goes to `wifi_help`
+In the updated graph, I added a new node called `clarify_problem`. When both topics are found, the graph goes to this node and asks the user which problem they want to solve first
+The updated graph has a new route, not just a different reply
+
+**What does LangGraph control, and what do my functions decide?**
+
+**LangGraph controls:**
+- The order of node execution.
+- The transitions between nodes.
+- The graph state during execution.
+- When the graph starts and ends.
+
+**My Python functions decide:**
+- Which category matches the message.
+- Which route should be selected.
+- Which instructions to retrieve from the JSON file.
+- What reply to return.
 
 ## Part 2 — Model and tools
 

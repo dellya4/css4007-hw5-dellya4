@@ -1,0 +1,39 @@
+{
+  "part": 1,
+  "graph_version": "original",
+  "message": "My laptop screen is broken.",
+  "predicted_route": [
+    "read_request",
+    "other_help"
+  ],
+  "actual_route": [
+    "read_request",
+    "other_help"
+  ],
+  "prediction_matches": true,
+  "trace": [
+    {
+      "node": "read_request",
+      "update": {
+        "category": "other"
+      },
+      "state_after": {
+        "message": "My laptop screen is broken.",
+        "category": "other",
+        "reply": ""
+      }
+    },
+    {
+      "node": "other_help",
+      "update": {
+        "reply": "Is your problem related to Wi-Fi or a password?"
+      },
+      "state_after": {
+        "message": "My laptop screen is broken.",
+        "category": "other",
+        "reply": "Is your problem related to Wi-Fi or a password?"
+      }
+    }
+  ],
+  "final_response": "Is your problem related to Wi-Fi or a password?"
+}
