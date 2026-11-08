@@ -8,14 +8,14 @@ Graph:
 
 ![Original Graph.png](graph/Original%20Graph.png)
 
-### Predictions before running
-
 | Node          | Reads                           | Changes       | 
 |---------------|---------------------------------|---------------|
 | read_request  | message                         | Sets category |
 | wifi_help     | Wi-Fi instructions from JSON    | Sets reply    |
 | password_help | Password instructions from JSON | Sets reply    |
 | other_help    | No additional data              | Sets reply    |
+
+The Wi-Fi and password instructions are loaded from `data/helpdesk.json`. The graph keeps the original message in the state and updates the category and reply step by step
 
 **1. What information does each node read and change?**
 
@@ -93,9 +93,114 @@ The updated graph has a new route, not just a different reply
 - Which instructions to retrieve from the JSON file.
 - What reply to return.
 
+### Execution Logs
+
+- [Original graph — Wi-Fi](outputs/part1_original_01.json)
+- [Original graph — password](outputs/part1_original_02.json)
+- [Original graph — other](outputs/part1_original_03.json)
+- [Original graph — both topics](outputs/part1_original_04.json)
+- [Updated graph — both topics](outputs/part1_updated_01.json)
+
 ## Part 2 — Model and tools
 
-TODO: draw the model/tool loop. Answer the four questions in the brief. Record the model and provider, direct calls to each tool, and one actual run that uses multiple tools. Explain the loop limit.
+**Model and tool loop**
+
+![Model and tool loop.png](graph/Model%20and%20tool%20loop.png)
+
+**Model and provider**
+
+Provider: OpenAI
+
+Model: gpt-4o-mini 
+
+Framework: LangGraph
+
+The model decides when to use tools. The tools read local JSON files or save ticket drafts
+
+**1. How does the graph decide between running a tool and ending with an answer?**
+
+The graph checks the model's response. If the model requests a tool, the graph goes to tools. If there is no tool request, the graph ends with the final answer
+
+**2. Which component requests a tool, and which component actually executes it?**
+
+The AI model requests a tool. LangGraph's ToolNode executes it and returns the result
+
+**3. What changes in the state after a tool result returns?**
+
+The tool result is added to the message state. The model can read this result and decide what to do next
+
+**4. What makes this part different from the fixed routing rules in Part 1?**
+
+Part 1 uses fixed Python rules to choose a route. Part 2 uses an AI model to choose tools and make decisions based on their results
+
+Direct Tool Tests
+
+I tested all three tools without the AI model using python part2/tools.py.
+
+| Tool                 | Test                             | Result                               |
+|----------------------|----------------------------------|--------------------------------------|
+| find_instructions    | Find Wi-Fi instructions          | Returned instructions from GUIDE-WIF | 
+| check_service_status | Check Wi-Fi using normal profile | Returned operational                 | 
+| prepare_ticket       | Create a Wi-Fi ticket draft      | Saved a local JSON ticket            |
+
+**Example Run - S06**
+
+The user first requested Wi-Fi troubleshooting instructions. The assistant called find_instructions and returned the steps from the local guide.
+
+The user then said that Wi-Fi still did not work and requested a ticket if the service was operating.
+
+**Actual execution:**
+
+1. assistant requested find_instructions with category wifi.
+
+2. tools returned the GUIDE-WIFI instructions.
+
+3. assistant returned the troubleshooting steps.
+
+4. assistant requested check_service_status with category wifi.
+
+5. tools returned status operational.
+
+6. assistant requested prepare_ticket with the problem description and steps tried.
+
+7. tools saved ticket TICKET-7BC87F22F6.json.
+
+8. assistant confirmed that the ticket was saved locally and not sent.
+
+The ticket contained the steps the user mentioned: enabling Wi-Fi, forgetting the saved network and trying to connect again
+
+Different Status Profiles
+
+| Scenario | Status profile     | Result                            | 
+|----------|--------------------|-----------------------------------|
+| S06      | normal             | Wi-Fi operational, ticket created |
+| S07      | wifi_outage        | Wi-Fi outage, no ticket created   | 
+| S08      | status_unavailable | Unknown status, no ticket created | 
+| S14      | recovery_outage    | Account recovery outage reported  | 
+
+The model used the selected status data instead of always creating a ticket
+
+**Tool Loop Limit**
+
+I set recursion_limit=16 in the LangGraph configuration.
+
+This prevents the graph from running forever. If the graph reaches the limit, GraphRecursionError is caught and the program returns an error message
+
+The limit was not reached in my successful scenario runs.
+
+Execution Logs
+
+* [S06](outputs/S06.json) - Operational Wi-Fi
+
+* [S07](outputs/S07.json) - Wi-Fi outage
+
+* [S08](outputs/S08.json) - Unknown status
+
+* [S09](outputs/S09.json) - Missing ticket details
+
+* [S14](outputs/S14.json) - Account recovery outage
+
+All ticket drafts are saved locally. No real support tickets are submitted
 
 ## Part 3 — Memory
 

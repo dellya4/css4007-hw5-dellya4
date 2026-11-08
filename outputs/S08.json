@@ -1,0 +1,53 @@
+{
+  "scenario": "S08",
+  "user_id": "demo-user-a",
+  "thread_id": "s08",
+  "status_profile": "status_unavailable",
+  "messages": [
+    "Check whether Wi-Fi is down. If it is operating, prepare a ticket. I already enabled Wi-Fi and reconnected, with no success."
+  ],
+  "trace": [
+    {
+      "node": "assistant",
+      "messages": [
+        {
+          "type": "ai",
+          "content": "",
+          "tool_calls": [
+            {
+              "name": "check_service_status",
+              "args": {
+                "category": "wifi"
+              },
+              "id": "call_PeVLU8KwHiJE9nkU4NkSPkdU",
+              "type": "tool_call"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "node": "tools",
+      "messages": [
+        {
+          "type": "tool",
+          "content": "{\"category\": \"wifi\", \"service\": \"wifi\", \"status\": \"unknown\", \"message\": \"The demo Wi-Fi status source is unavailable.\", \"status_profile\": \"status_unavailable\"}",
+          "name": "check_service_status"
+        }
+      ]
+    },
+    {
+      "node": "assistant",
+      "messages": [
+        {
+          "type": "ai",
+          "content": "The Wi-Fi service status is currently unknown, as the status source is unavailable. I cannot create a ticket under these circumstances. However, if you'd like, I can prepare a draft for you. Would you like me to do that?"
+        }
+      ]
+    }
+  ],
+  "responses": [
+    "The Wi-Fi service status is currently unknown, as the status source is unavailable. I cannot create a ticket under these circumstances. However, if you'd like, I can prepare a draft for you. Would you like me to do that?"
+  ],
+  "loop_limit_reached": false
+}

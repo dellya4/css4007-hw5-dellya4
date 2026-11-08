@@ -1,0 +1,53 @@
+{
+  "scenario": "S14",
+  "user_id": "demo-user-a",
+  "thread_id": "s14",
+  "status_profile": "recovery_outage",
+  "messages": [
+    "My password recovery page is unavailable. Check the service status. Is there a known problem?"
+  ],
+  "trace": [
+    {
+      "node": "assistant",
+      "messages": [
+        {
+          "type": "ai",
+          "content": "",
+          "tool_calls": [
+            {
+              "name": "check_service_status",
+              "args": {
+                "category": "account_recovery"
+              },
+              "id": "call_1n9GnZw9G0ZJUPKgoqeLSH7l",
+              "type": "tool_call"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "node": "tools",
+      "messages": [
+        {
+          "type": "tool",
+          "content": "{\"category\": \"password\", \"service\": \"account_recovery\", \"status\": \"outage\", \"message\": \"The demo account-recovery service is unavailable. The fixture gives no repair time.\", \"status_profile\": \"recovery_outage\"}",
+          "name": "check_service_status"
+        }
+      ]
+    },
+    {
+      "node": "assistant",
+      "messages": [
+        {
+          "type": "ai",
+          "content": "The password recovery service is currently experiencing an outage and is unavailable. Unfortunately, there is no information on a repair time at this moment. If you need further assistance or would like to prepare a ticket for this issue, please let me know!"
+        }
+      ]
+    }
+  ],
+  "responses": [
+    "The password recovery service is currently experiencing an outage and is unavailable. Unfortunately, there is no information on a repair time at this moment. If you need further assistance or would like to prepare a ticket for this issue, please let me know!"
+  ],
+  "loop_limit_reached": false
+}

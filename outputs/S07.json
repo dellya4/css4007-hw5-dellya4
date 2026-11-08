@@ -1,0 +1,53 @@
+{
+  "scenario": "S07",
+  "user_id": "demo-user-a",
+  "thread_id": "s07",
+  "status_profile": "wifi_outage",
+  "messages": [
+    "I enabled Wi-Fi and forgot the saved network, but Campus-Demo still will not connect. Check whether Wi-Fi is down. If it is operating, prepare a ticket about this problem."
+  ],
+  "trace": [
+    {
+      "node": "assistant",
+      "messages": [
+        {
+          "type": "ai",
+          "content": "",
+          "tool_calls": [
+            {
+              "name": "check_service_status",
+              "args": {
+                "category": "wifi"
+              },
+              "id": "call_8TNt4rUyrWxFZYV6pPfTX68k",
+              "type": "tool_call"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "node": "tools",
+      "messages": [
+        {
+          "type": "tool",
+          "content": "{\"category\": \"wifi\", \"service\": \"wifi\", \"status\": \"outage\", \"message\": \"The demo Wi-Fi service is unavailable across campus. The fixture gives no repair time.\", \"status_profile\": \"wifi_outage\"}",
+          "name": "check_service_status"
+        }
+      ]
+    },
+    {
+      "node": "assistant",
+      "messages": [
+        {
+          "type": "ai",
+          "content": "The demo Wi-Fi service is currently experiencing an outage and is unavailable across campus. Since the service is down, I cannot create a ticket for your issue. If you need further assistance or have any other questions, feel free to ask!"
+        }
+      ]
+    }
+  ],
+  "responses": [
+    "The demo Wi-Fi service is currently experiencing an outage and is unavailable across campus. Since the service is down, I cannot create a ticket for your issue. If you need further assistance or have any other questions, feel free to ask!"
+  ],
+  "loop_limit_reached": false
+}
