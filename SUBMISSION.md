@@ -95,11 +95,11 @@ The updated graph has a new route, not just a different reply
 
 ### Execution Logs
 
-- [Original graph — Wi-Fi](outputs/part1_original_01.json)
-- [Original graph — password](outputs/part1_original_02.json)
-- [Original graph — other](outputs/part1_original_03.json)
-- [Original graph — both topics](outputs/part1_original_04.json)
-- [Updated graph — both topics](outputs/part1_updated_01.json)
+- [Original graph — Wi-Fi](outputs/S01.json)
+- [Original graph — password](outputs/S02.json)
+- [Original graph — other](outputs/S03.json)
+- [Original graph — both topics](outputs/S04.json)
+- [Updated graph — both topics](outputs/S05.json)
 
 ## Part 2 — Model and tools
 
@@ -133,15 +133,15 @@ The tool result is added to the message state. The model can read this result an
 
 Part 1 uses fixed Python rules to choose a route. Part 2 uses an AI model to choose tools and make decisions based on their results
 
-Direct Tool Tests
+### Direct Tool Tests
 
 I tested all three tools without the AI model using python part2/tools.py.
 
-| Tool                 | Test                             | Result                               |
-|----------------------|----------------------------------|--------------------------------------|
-| find_instructions    | Find Wi-Fi instructions          | Returned instructions from GUIDE-WIF | 
-| check_service_status | Check Wi-Fi using normal profile | Returned operational                 | 
-| prepare_ticket       | Create a Wi-Fi ticket draft      | Saved a local JSON ticket            |
+| Tool                 | Test                             | Result                                |
+|----------------------|----------------------------------|---------------------------------------|
+| find_instructions    | Find Wi-Fi instructions          | Returned instructions from GUIDE-WIFI | 
+| check_service_status | Check Wi-Fi using normal profile | Returned operational                  | 
+| prepare_ticket       | Create a Wi-Fi ticket draft      | Saved a local JSON ticket             |
 
 **Example Run - S06**
 
@@ -169,7 +169,7 @@ The user then said that Wi-Fi still did not work and requested a ticket if the s
 
 The ticket contained the steps the user mentioned: enabling Wi-Fi, forgetting the saved network and trying to connect again
 
-Different Status Profiles
+### Different Status Profiles
 
 | Scenario | Status profile     | Result                            | 
 |----------|--------------------|-----------------------------------|
@@ -188,7 +188,7 @@ This prevents the graph from running forever. If the graph reaches the limit, Gr
 
 The limit was not reached in my successful scenario runs.
 
-Execution Logs
+### Execution Logs
 
 * [S06](outputs/S06.json) - Operational Wi-Fi
 
@@ -243,27 +243,148 @@ The program clears the scenario's memory before its first event when `reset_befo
 
 ## Part 4 — Running and checking my work
 
-TODO: point to the README setup steps, package versions, memory-reset instructions, tests and GitHub Actions workflow. Explain which mistake each test catches and which runs use a fake model.
+### Setup and Dependencies
+
+I wrote setup instructions in [README.md](README.md)
+
+The README explains how to:
+- Create and activate a virtual environment.
+- Install packages from `requirements.txt`.
+- Configure the `.env` file and API key.
+- Run Parts 1, 2 and 3.
+- Run automated tests.
+
+I recorded the package versions in `requirements.txt`.
+The project uses Python 3.12.
+
+### Memory Storage and Reset
+
+Conversation memory and user preferences are stored
+in SQLite databases under `local-storage/part3/`.
+
+The README explains how to clear saved memory.
+
+For scenarios with `reset_before=true`, the program
+resets the scenario's storage before the first event.
+
+For restart scenarios, the same storage is preserved
+between two separate Python processes.
 
 ## Choices and limitations
 
-TODO: explain the storage and libraries I chose, why they fit this task, and what still does not work reliably.
+### My Choices
+
+**LangGraph**
+
+I chose LangGraph because it helps organize the
+assistant into nodes and conditional transitions.
+It also supports tool calling and conversation memory.
+
+**OpenAI**
+
+I used `gpt-4o-mini` because it supports tool calling
+and is suitable for a small helpdesk project.
+
+**Local JSON Files**
+
+I used the supplied JSON files for instructions,
+service statuses, ticket templates and scenarios.
+This makes the application easy to test without
+connecting to real university systems.
+
+**SQLite**
+
+I chose SQLite because it is simple, local and does
+not require a separate database server.
+
+It stores conversation history and user preferences
+even after restarting the program.
+
+**Local Ticket Drafts**
+
+Tickets are saved as JSON files. They are not sent
+to a real helpdesk.
+
+**Pytest and GitHub Actions**
+
+Pytest checks the main functions automatically.
+GitHub Actions runs these tests after pushing code.
+
+### Limitations
+
+- The application uses fictional local information.
+- It doesn't connect to real university services.
+- Tickets are saved locally and aren't submitted.
+- The AI model may sometimes choose an unnecessary tool.
+- Model responses may be different between runs.
+- The application needs an API key for Parts 2 and 3.
+- Language preference detection uses simple Python rules.
+- The application only supports a limited set of IT problems.
+- Automated tests don't fully test the real AI model.
+
+### Automated Tests
+
+I used pytest to test the application.
+
+
+| Test                    | What mistake it catches                           |
+|-------------------------|---------------------------------------------------|
+| Wi-Fi routing           | Wi-Fi requests going to the wrong node            |
+| Password routing        | Uppercase PASSWORD not being recognized           |
+| Unsupported request     | Unknown messages going to the wrong node          |
+| Original graph priority | Incorrect priority when both topics appear        |
+| Updated graph           | Missing clarification for both topics             |
+| Instructions tool       | Incorrect instructions from the JSON file         |
+| Service status          | Incorrect status for the selected profile         |
+| Account recovery        | Incorrect mapping of password recovery            |
+| Ticket creation         | Ticket draft not saved correctly                  |
+| Conditional ticket      | Ticket created during an outage or unknown status |
+| Missing details         | Ticket created without required information       |
+| Conversation memory     | History lost after reopening SQLite               |
+| Thread isolation        | Messages shared between different conversations   |
+| User isolation          | Conversation history shared between users         |
+| User preference         | Saved language preference lost                    |
+
+
+### Fake Model and Real Model
+
+Automated memory tests use a fake assistant based on
+Python functions. It doesn't call an OpenAI model.
+
+Routing tests and direct tool tests also work without
+an API key.
+
+The scenario demonstrations in Parts 2 and 3 use
+the real OpenAI model (`gpt-4o-mini`)
+
+### GitHub Actions
+
+I created `.github/workflows/tests.yml`.
+
+The workflow installs dependencies and runs pytest
+automatically on GitHub.
+
+GitHub Actions completed successfully, with a green
+check mark.
+
+No private API key is required for these tests.
+
 
 ## Supplied scenarios — my actual results
 
-| Scenario | Command or manual steps | Log file | What happened / what I changed |
-| --- | --- | --- | --- |
-| S01 — Simple Wi-Fi route | | | |
-| S02 — Case-insensitive password route | | | |
-| S03 — Unsupported request | | | |
-| S04 — Two topics before the graph change | | | |
-| S05 — Two topics after adding clarification | | | |
-| S06 — Instructions then local ticket | | | |
-| S07 — The same request during a Wi-Fi outage | | | |
-| S08 — Status source unavailable | | | |
-| S09 — Missing ticket details | | | |
-| S10 — Use the current conversation | | | |
-| S11 — Persist and recall after restart | | | |
-| S12 — Preference across threads without replay | | | |
-| S13 — Do not share memory between users | | | |
-| S14 — Password recovery outage | | | |
+| Scenario                                       | Command or manual steps                                                       | Log file           | What happened / what I changed                                                                                        |
+|------------------------------------------------|-------------------------------------------------------------------------------|--------------------|-----------------------------------------------------------------------------------------------------------------------|
+| S01 — Simple Wi-Fi route                       | `python part1.py --mode original`                                             | `outputs/S01.json` | The message went to wifi_help and returned Wi-Fi instructions                                                         |
+| S02 — Case-insensitive password route          | `python part1.py --mode original`                                             | `outputs/S02.json` | Uppercase PASSWORD was recognized correctly                                                                           |
+| S03 — Unsupported request                      | `python part1.py --mode original`                                             | `outputs/S03.json` | The graph selected other_help and asked for clarification                                                             |
+| S04 — Two topics before the graph change       | `python part1.py --mode original`                                             | `outputs/S04.json` | Wi-Fi had priority when both topics appeared                                                                          |
+| S05 — Two topics after adding clarification    | `python part1.py --mode updated --message "My Wi-Fi password does not work."` | `outputs/S05.json` | The new clarify_problem node asked which problem to solve first                                                       |
+| S06 — Instructions then local ticket           | `python -m part2.main --scenario S06`                                         | `outputs/S06.json` | The model retrieved instructions, checked Wi-Fi status and created a local ticket because the service was operational |
+| S07 — The same request during a Wi-Fi outage   | `python -m part2.main --scenario S07`                                         | `outputs/S07.json` | The model detected an outage and didn't create a conditional ticket                                                   |
+| S08 — Status source unavailable                | `python -m part2.main --scenario S08`                                         | `outputs/S08.json` | The status was unknown. The assistant offered a draft instead of creating one automatically                           |
+| S09 — Missing ticket details                   | `python -m part2.main --scenario S09`                                         | `outputs/S09.json` | The assistant asked for missing information and then created a local draft                                            |
+| S10 — Use the current conversation             | `python -m part3.main --scenario S10`                                         | `outputs/S10.json` | The assistant remembered the Wi-Fi problem and three previously attempted steps                                       |
+| S11 — Persist and recall after restart         | `python -m part3.main --scenario S11 --segment 1` then `--segment 2`          | `outputs/S11.json` | After restarting, the assistant loaded 4 previous messages and remembered the problem and steps                       |
+| S12 — Preference across threads without replay | `python -m part3.main --scenario S12 --segment 1` then `--segment 2`          | `outputs/S12.json` | A new thread remembered the user's Kazakh language preference without loading the old conversation                    |
+| S13 — Do not share memory between users        | `python -m part3.main --scenario S13`                                         | `outputs/S13.json` | The second user had no saved preference or previous conversation                                                      |
+| S14 — Password recovery outage                 | `python -m part2.main --scenario S14`                                         | `outputs/S14.json` | The assistant checked account_recovery, detected an outage and didn't create a ticket                                 |
