@@ -1,0 +1,104 @@
+{
+  "scenario": "S11",
+  "status_profile": "normal",
+  "storage": "C:\\Users\\asely\\PycharmProjects\\css4007-hw5-dellya4\\local-storage\\part3\\S11",
+  "runs": [
+    {
+      "segment": 1,
+      "events": [
+        {
+          "user_id": "demo-user-a",
+          "thread_id": "restart-a",
+          "status_profile": "normal",
+          "message": "Please remember that I prefer replies in Kazakh. My issue is Wi-Fi. I enabled it and tried reconnecting, but it still fails.",
+          "memory_read": {
+            "conversation_messages_before": 0,
+            "user_preference_before": null,
+            "user_preference_after": "Kazakh",
+            "preference_updated": true
+          },
+          "sources": [
+            "user_memory",
+            "service_status_reference"
+          ],
+          "trace": [
+            {
+              "node": "assistant",
+              "messages": [
+                {
+                  "type": "ai",
+                  "content": "Wi-Fi мәселесін шешу үшін, мен қызметтің күйін тексеріп көремін. Бір сәт күтіңіз.",
+                  "tool_calls": [
+                    {
+                      "name": "check_service_status",
+                      "args": {
+                        "category": "wifi"
+                      }
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "node": "tools",
+              "messages": [
+                {
+                  "type": "tool",
+                  "content": "{\"category\": \"wifi\", \"service\": \"wifi\", \"status\": \"operational\", \"message\": \"The demo Wi-Fi service has no reported outage.\", \"status_profile\": \"normal\"}",
+                  "name": "check_service_status"
+                }
+              ]
+            },
+            {
+              "node": "assistant",
+              "messages": [
+                {
+                  "type": "ai",
+                  "content": "Wi-Fi қызметі қалыпты жұмыс істеп тұр, яғни ақаулар жоқ. \n\nСіз Wi-Fi-ға қосылу үшін қандай әрекеттер жасадыңыз? Мүмкін, мен сізге қосымша көмек көрсете аламын."
+                }
+              ]
+            }
+          ],
+          "final_response": "Wi-Fi қызметі қалыпты жұмыс істеп тұр, яғни ақаулар жоқ. \n\nСіз Wi-Fi-ға қосылу үшін қандай әрекеттер жасадыңыз? Мүмкін, мен сізге қосымша көмек көрсете аламын.",
+          "saved_messages_after": 4,
+          "loop_limit_reached": false
+        }
+      ]
+    },
+    {
+      "segment": 2,
+      "events": [
+        {
+          "user_id": "demo-user-a",
+          "thread_id": "restart-a",
+          "status_profile": "normal",
+          "message": "Which problem and steps did we discuss?",
+          "memory_read": {
+            "conversation_messages_before": 4,
+            "user_preference_before": "Kazakh",
+            "user_preference_after": "Kazakh",
+            "preference_updated": false
+          },
+          "sources": [
+            "conversation_memory",
+            "user_memory"
+          ],
+          "trace": [
+            {
+              "node": "assistant",
+              "messages": [
+                {
+                  "type": "ai",
+                  "content": "Сіз Wi-Fi-ға қосылу мәселесін айтып, Wi-Fi-ны қосып, қайта қосылуға тырысқаныңызды айттыңыз, бірақ ол әлі де жұмыс істемейді."
+                }
+              ]
+            }
+          ],
+          "final_response": "Сіз Wi-Fi-ға қосылу мәселесін айтып, Wi-Fi-ны қосып, қайта қосылуға тырысқаныңызды айттыңыз, бірақ ол әлі де жұмыс істемейді.",
+          "saved_messages_after": 6,
+          "loop_limit_reached": false
+        }
+      ]
+    }
+  ]
+}

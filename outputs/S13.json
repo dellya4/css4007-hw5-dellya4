@@ -1,0 +1,68 @@
+{
+  "scenario": "S13",
+  "status_profile": "normal",
+  "storage": "C:\\Users\\asely\\PycharmProjects\\css4007-hw5-dellya4\\local-storage\\part3\\S13",
+  "runs": [
+    {
+      "segment": 1,
+      "events": [
+        {
+          "user_id": "demo-user-a",
+          "thread_id": "isolation-a",
+          "status_profile": "normal",
+          "message": "Please remember that I prefer replies in Kazakh. I have a Wi-Fi problem.",
+          "memory_read": {
+            "conversation_messages_before": 0,
+            "user_preference_before": null,
+            "user_preference_after": "Kazakh",
+            "preference_updated": true
+          },
+          "sources": [
+            "user_memory"
+          ],
+          "trace": [
+            {
+              "node": "assistant",
+              "messages": [
+                {
+                  "type": "ai",
+                  "content": "Сіз Wi-Fi мәселесімен айналысып жатқаныңызды түсіндім. Мәселені шешу үшін не істегеніңізді айтып бере аласыз ба?"
+                }
+              ]
+            }
+          ],
+          "final_response": "Сіз Wi-Fi мәселесімен айналысып жатқаныңызды түсіндім. Мәселені шешу үшін не істегеніңізді айтып бере аласыз ба?",
+          "saved_messages_after": 2,
+          "loop_limit_reached": false
+        },
+        {
+          "user_id": "demo-user-b",
+          "thread_id": "isolation-b",
+          "status_profile": "normal",
+          "message": "Have I told you a preferred language or a previous problem?",
+          "memory_read": {
+            "conversation_messages_before": 0,
+            "user_preference_before": null,
+            "user_preference_after": null,
+            "preference_updated": false
+          },
+          "sources": [],
+          "trace": [
+            {
+              "node": "assistant",
+              "messages": [
+                {
+                  "type": "ai",
+                  "content": "No, you haven't provided a preferred language or mentioned a previous problem."
+                }
+              ]
+            }
+          ],
+          "final_response": "No, you haven't provided a preferred language or mentioned a previous problem.",
+          "saved_messages_after": 2,
+          "loop_limit_reached": false
+        }
+      ]
+    }
+  ]
+}

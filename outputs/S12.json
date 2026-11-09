@@ -1,0 +1,75 @@
+{
+  "scenario": "S12",
+  "status_profile": "normal",
+  "storage": "C:\\Users\\asely\\PycharmProjects\\css4007-hw5-dellya4\\local-storage\\part3\\S12",
+  "runs": [
+    {
+      "segment": 1,
+      "events": [
+        {
+          "user_id": "demo-user-a",
+          "thread_id": "preference-a1",
+          "status_profile": "normal",
+          "message": "Please remember that I prefer replies in Kazakh. I have a Wi-Fi problem.",
+          "memory_read": {
+            "conversation_messages_before": 0,
+            "user_preference_before": null,
+            "user_preference_after": "Kazakh",
+            "preference_updated": true
+          },
+          "sources": [
+            "user_memory"
+          ],
+          "trace": [
+            {
+              "node": "assistant",
+              "messages": [
+                {
+                  "type": "ai",
+                  "content": "Сіз Wi-Fi мәселесімен айналысып жатқаныңызды түсіндім. Мәселені шешу үшін не істегеніңізді айтып бере аласыз ба?"
+                }
+              ]
+            }
+          ],
+          "final_response": "Сіз Wi-Fi мәселесімен айналысып жатқаныңызды түсіндім. Мәселені шешу үшін не істегеніңізді айтып бере аласыз ба?",
+          "saved_messages_after": 2,
+          "loop_limit_reached": false
+        }
+      ]
+    },
+    {
+      "segment": 2,
+      "events": [
+        {
+          "user_id": "demo-user-a",
+          "thread_id": "preference-a2",
+          "status_profile": "normal",
+          "message": "Which language did I ask you to use? What can you help with?",
+          "memory_read": {
+            "conversation_messages_before": 0,
+            "user_preference_before": "Kazakh",
+            "user_preference_after": "Kazakh",
+            "preference_updated": false
+          },
+          "sources": [
+            "user_memory"
+          ],
+          "trace": [
+            {
+              "node": "assistant",
+              "messages": [
+                {
+                  "type": "ai",
+                  "content": "Сіз мені қазақ тілінде жауап беруімді сұрадыңыз. Мен Wi-Fi, парольді қалпына келтіру, қызметтің күйі және жергілікті билет жобаларын дайындау бойынша көмектесе аламын."
+                }
+              ]
+            }
+          ],
+          "final_response": "Сіз мені қазақ тілінде жауап беруімді сұрадыңыз. Мен Wi-Fi, парольді қалпына келтіру, қызметтің күйі және жергілікті билет жобаларын дайындау бойынша көмектесе аламын.",
+          "saved_messages_after": 2,
+          "loop_limit_reached": false
+        }
+      ]
+    }
+  ]
+}

@@ -204,14 +204,42 @@ All ticket drafts are saved locally. No real support tickets are submitted
 
 ## Part 3 — Memory
 
-TODO: explain conversation state, thread_id, user identifier, user preference storage, and retrieval from helpdesk.json.
+### How Memory Works
 
-| Situation | Command used | Log file | What happened |
-| --- | --- | --- | --- |
-| Refer to an earlier message | | | |
-| Close, restart and resume | | | |
-| Same user, new conversation | | | |
-| Different user | | | |
+**Conversation State**
+
+Conversation state stores the messages and tool results from the current conversation. I use LangGraph `SqliteSaver` to save this state in SQLite. It survives program restarts
+
+**Thread ID**
+
+`thread_id` identifies a specific conversation. Each thread has its own message history
+
+**User Identifier**
+
+`user_id` identifies a user. In my code, I use both `user_id` and `thread_id` to keep conversations separate
+
+**User Preference Storage**
+
+I use a separate SQLite database to store language preferences by `user_id`. The same preference is available in a new conversation for the same user
+
+**Retrieval from helpdesk.json**
+
+Retrieval means reading general instructions from `helpdesk.json` using `find_instructions`. This is different from memory because the instructions are reference data, not information remembered about a user
+
+### Memory Tests
+
+| Situation                   | Command used                                                                                            | Log file           | What happened                                                                           |
+|-----------------------------|---------------------------------------------------------------------------------------------------------|--------------------|-----------------------------------------------------------------------------------------|
+| Refer to an earlier message | `python -m part3.main --scenario S10`                                                                   | `outputs/S10.json` | The assistant remembered the Wi-Fi problem and the three steps already tried            |
+| Close, restart and resume   | `python -m part3.main --scenario S11 --segment 1` and `python -m part3.main --scenario S11 --segment 2` | `outputs/S11.json` | The assistant loaded 4 previous messages after restart and remembered the Wi-Fi problem |
+| Same user, new conversation | `python -m part3.main --scenario S12 --segment 1` and `python -m part3.main --scenario S12 --segment 2` | `outputs/S12.json` | A new thread had no previous messages, but the saved Kazakh preference was available    |
+| Different user              | `python -m part3.main --scenario S13`                                                                   | `outputs/S13.json` | The second user had no previous messages or saved language preference                   |
+
+### Where Memory Is Stored
+
+Conversation and user memory are saved in `local-storage/part3/` as SQLite files
+
+The program clears the scenario's memory before its first event when `reset_before` is true. It keeps the same storage between restart segments.
 
 ## Part 4 — Running and checking my work
 
